@@ -1,0 +1,29 @@
+import requests
+from bs4 import BeautifulSoup
+
+
+def get_top():
+    url = "https://s.weibo.com/top/summary"
+    headers = {"User-Agent": "", "Cookie": ""}
+    wb_response = requests.get(url, headers=headers)
+    webcontent = wb_response.text
+    soup = BeautifulSoup(webcontent, "html.parser")
+    index_list = soup.find_all("td", class_="td-01")
+    title_list = soup.find_all("td", class_="td-02")
+    level_list = soup.find_all("td", class_="td-03")
+
+    topic_list = ""
+    for i in range(len(index_list)):
+        item_index = index_list[i].get_text(strip=True)
+        if item_index == "":
+            item_index = "Pin"  # 0
+        item_title = title_list[i].a.get_text(strip=True)
+        if title_list[i].span:
+            item_mark = title_list[i].span.get_text(strip=True)
+        else:
+            item_mark = ""  # 置顶
+        item_level = level_list[i].get_text(strip=True)
+        topic_list += "%s %s %s" % (item_index, item_title, item_mark) + "\n"
+        # topic_list.append({"index": item_index, "title": item_title, "mark": item_mark, "level": item_level,
+        #                    "link": f"https://s.weibo.com/weibo?q=%23{item_title}%23&Refer=top"})
+    return topic_list.rstrip()
