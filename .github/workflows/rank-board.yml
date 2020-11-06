@@ -2,7 +2,7 @@ name: Rank-board
 
 on: 
   schedule:
-    - cron: "* * * * *"
+    - cron: "0 * * * *"
 
 jobs:
   build:
